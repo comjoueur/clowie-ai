@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Plan your stay</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Karla', sans-serif;
+    }
+    .btn-black {
+      background-color: black;
+      color: white;
+    }
+    .center {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 400px; margin-top: 30px">
+    <h4><b>Plan your stay</b></h4>
+    <form style="margin-top: 20px">
+      <div class="form-group">
+        <h6><b>Where do you want to stay?</b></h6>
+        <input placeholder="Budget per night" type="number" class="form-control" id="budgetNight">
+        <select class="form-control">
+          <option value="">Type of hotel</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top: 20px">
+        <h6><b>Where do you want to eat?</b></h6>
+        <input placeholder="Budget per dinner" type="number" class="form-control" id="budgetDinner">
+        <select class="form-control">
+          <option value="">Preferred type of restaurant</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <h6><b>What to do?</b></h6>
+        <input placeholder="How many activities per day?" type="number" class="form-control" id="activities">
+      </div>
+      <div class="center" style="width: 100%">
+        <button type="submit" style="width: 100%; margin-top: 10px" class="btn btn-black">Generate plan</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Form Submission</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="container" style='max-width: 600px'>
+  <button class="btn btn-primary mt-5" onclick="window.history.back();">Back</button>
+    <h1 class="mt-5">Form Submission</h1>
+    <form id="submissionForm" style="margin-bottom: 30px">
+        <div class="form-group">
+            <label for="type">Type</label>
+            <input type="text" class="form-control" id="type" placeholder="Enter Type">
+        </div>
+        <div class="form-group">
+            <label for="source">Source</label>
+            <input type="text" class="form-control" id="source" placeholder="Enter Source">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter Name">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" placeholder="Enter Description">
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" placeholder="Enter Address">
+        </div>
+        <div class="form-group">
+            <label for="typeFood">Type of Food LV</label>
+            <input type="text" class="form-control" id="typeFood" placeholder="Enter Type of Food LV">
+        </div>
+        <div class="form-group">
+            <label for="priceRange">Price Range</label>
+            <input type="text" class="form-control" id="priceRange" placeholder="Enter Price Range">
+        </div>
+        <button type="submit" class="btn btn-primary" style="display: block; margin-left: auto; margin-right: auto;">Submit</button>
+    </form>
+  </div>
+    <script>
+        $('#submissionForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/process',
+                data: $(this).serialize(),
+                success: function() {
+                    alert('Form submission successful');
+                },
+                error: function() {
+                    alert('There was an error with the form submission');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
