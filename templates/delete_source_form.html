@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <form id="deleteForm" method="POST">
+      <select class="selectpicker form-control" data-live-search="true" id="sourceId">
+        <!-- Options will be populated dynamically -->
+      </select>
+      <button type="submit" class="btn btn-danger mt-3">Delete Source</button>
+    </form>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+  <script>
+    $(function () {
+      // Populate options dynamically from the "/api/sources/list" endpoint
+      function populateSelectOptions(){
+        $.get('/api/sources/list', function(data) {
+          var select = $('#sourceId');
+          data.forEach(function(source) {
+            var option = new Option(source._source.name, source._id);
+            select.append(option);
+          });
+          select.selectpicker('refresh');
+        });
+      }
+      populateSelectOptions();
+
+      // Listen to the submit event on form
+      document.getElementById('deleteForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var sourceId = document.getElementById('sourceId').value;
+        var confirmation = confirm('Are you sure you want to delete this source?');
+        if (confirmation) {
+          $.ajax({
+            url: '/api/source/' + sourceId,
+            type: 'DELETE',
+            success: function() {
+              alert('Source deleted successfully');
+              populateSelectOptions();
+            },
+            error: function() { alert('An error occurred'); },
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

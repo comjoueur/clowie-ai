@@ -12,6 +12,8 @@ ES_HEADERS = {
 class ESIndexModel:
   ES_INDEX = ''
   INGEST_PIPELINE = 'ent-search-generic-ingestion'
+  es_deployment_url = ES_DEPLOYMENT_URL
+  es_headers = ES_HEADERS
 
   @classmethod
   def create(cls, entity_data):
@@ -43,3 +45,43 @@ class ESIndexModel:
         response.status_code, response.text))
 
     return response.json()
+
+  @classmethod
+  def get_all(cls):
+    url = "{deployment_url}/{index}/_search".format(
+      deployment_url=ES_DEPLOYMENT_URL,
+      index=cls.ES_INDEX,
+    )
+    response = requests.get(url, headers=ES_HEADERS)
+    if response.status_code >= 300:
+      raise Exception("Entry was not created with status code {}\n{}".format(
+        response.status_code, response.text))
+
+    return response.json()['hits']['hits']
+
+  @classmethod
+  def delete_by_id(cls, id):
+    url = "{deployment_url}/{index}/_doc/{id}".format(
+      deployment_url=ES_DEPLOYMENT_URL,
+      index=cls.ES_INDEX,
+      id=id,
+    )
+    response = requests.delete(url, headers=ES_HEADERS)
+    if response.status_code >= 300:
+      raise Exception("Entry was not deleted with status code {}\n{}".format(
+        response.status_code, response.text))
+
+  @classmethod
+  def delete_all(cls):
+    url = "{deployment_url}/{index}/_delete_by_query".format(
+      deployment_url=ES_DEPLOYMENT_URL,
+      index=cls.ES_INDEX,
+    )
+    response = requests.post(url,
+                             headers=ES_HEADERS,
+                             data=json.dumps({'query': {
+                               'match_all': {}
+                             }}))
+    if response.status_code >= 300:
+      raise Exception("Entry was not created with status code {}\n{}".format(
+        response.status_code, response.text))

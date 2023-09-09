@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4 mb-4">
+      <ul id="list" class="list-group"></ul>
+    </div>
+
+    <script>
+        var array = [
+          {url: '/pages/create-source', name: 'Create new Source'},
+          {url: '/pages/create-entity', name: 'Create new Entity'},
+          {url: '/pages/create-entity-entry', name: 'Create new Entry'},
+          {url: '/pages/delete-all-indices-docs', name: 'Delete all Indices Docs'},
+          {url: '/pages/delete-source', name: 'Delete Source Doc'},
+          {url: '/pages/delete-entity', name: 'Delete Entity Doc'},
+          {url: '/pages/delete-entity-entry', name: 'Delete Entry Doc'},
+        ];
+
+        $(document).ready(function() {
+            array.forEach(function(item) {
+                $('#list').append('<li class="list-group-item"><a href="'+ item.url +'">'+ item.name +'</a></li>');
+            });
+        });
+    </script>
+</body>
+</html>

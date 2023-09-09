@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Entry</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-4 mb-4">
+        <form id="entryForm">
+            <select id="entryId" class="selectpicker" data-live-search="true"></select>
+            <button type="submit" class="btn btn-danger">Delete Entry</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $.get('/api/entity/entry/list', function(data) {
+                data.forEach(function(entry) {
+                    $('#entryId').append(new Option(entry.entity + '-' + entry.source, entry._id));
+                });
+                $('.selectpicker').selectpicker('refresh');
+            });
+
+            $("#entryForm").on("submit", function(event) {
+                event.preventDefault();
+                var confirmation = confirm("Are you sure you want to delete this entry?");
+                if (confirmation) {
+                    var entryId = $('#entryId').val();
+                    $.ajax({
+                        url: '/api/entity/entry/' + entryId,
+                        type: 'DELETE',
+                        success: function(result) {
+                            console.log(result);
+                            window.location.reload();
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

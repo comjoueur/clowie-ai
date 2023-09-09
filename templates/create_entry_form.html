@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Create Entity Entry</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet">
+    <style>
+        .bootstrap-select .dropdown-toggle .filter-option {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mb-5">
+        <h1 class="pt-5">Create Entity Entry</h1>
+        <form id="entryForm" class="pt-5">
+            <div class="form-group">
+                <label for="entityList">Entity:</label>
+                <select id="entityList" name="entity_id" class="selectpicker form-control" data-live-search="true">
+                   <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sourceList">Source:</label>
+                <select id="sourceList" name="source_id" class="selectpicker form-control" data-live-search="true">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="descriptionInput">Description:</label>
+                <textarea type="text" class="form-control" id="descriptionInput" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="addressInput">Address:</label>
+                <input class="form-control" id="addressInput" name="address" rows="3">
+            </div>
+            <div class="form-group">
+                <label for="typeOfFoodInput">Type of food:</label>
+                <input type="text" class="form-control" id="typeOfFoodInput" name="typeOfFoodInput">
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <input type="number" class="form-control" id="rating" name="rating">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+          function fetchData(url, elementId) {
+              $.ajax({
+                  url: url,
+                  type: 'GET',
+                  success: function(data) {
+                      $('#' + elementId).empty();
+                      data.forEach(function(item) {
+                          $('#' + elementId).append(`<option value="${item._id}">${item._source.name}</option>`);
+                      });
+                      $('#' + elementId).selectpicker('refresh');
+                  },
+                  error: function(error) {
+                      console.log(error);
+                  }
+              });
+          }
+           
+          fetchData('/api/entity/list', 'entityList');
+          fetchData('/api/sources/list', 'sourceList');
+  
+          // Rest of the code replaced with the submission form code as follows:
+          $('#entryForm').on('submit', function(e) {
+            e.preventDefault();
+            var entity_id = $('#entityList').val();
+            var source_id = $('#sourceList').val();
+            var description = $('#descriptionInput').val();
+            var address = $('#addressInput').val();
+            var type_of_food = $('#typeOfFoodInput').val();
+            var rating = $('#rating').val();
+            var data = {}
+            if (source_id) {
+              data['source_id'] = source_id;
+            }
+            if (description) {
+              data['description'] = description;
+            }
+            if (address) {
+              data['address'] = address;
+            }
+            if (type_of_food) {
+              data['typeOfFood'] = type_of_food;
+            }
+            if (rating) {
+              data['rating'] = rating;
+            }
+              
+            $.ajax({
+              url: '/api/entity/' + entity_id + '/entry',
+              type: 'POST',
+              data: JSON.stringify(data),
+              contentType: 'application/json',
+              success: function(response) {
+                alert('Entry created successfully!');
+              },
+              error: function(error) {
+                console.log(error);
+                alert('Error while creating entity. Please try again!');
+              }
+            });
+          });
+        });
+    </script>
+</body>
+
+</html>

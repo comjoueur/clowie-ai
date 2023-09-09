@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Entity Info</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center pt-5">Submit Entity Info</h1>
+    <form id="entityForm" class="pt-5">
+      <div class="form-group">
+        <label for="name">Name:</label><br>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="type">Type:</label><br>
+        <select class="form-control" id="type" name="type" required>
+          <option value="Restaurant">Restaurant</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="minPrice">Min Price:</label><br>
+        <input type="number" class="form-control" id="minPrice" name="minPrice" required>
+      </div>
+      <div class="form-group">
+        <label for="maxPrice">Max Price:</label><br>
+        <input type="number" class="form-control" id="maxPrice" name="maxPrice" required>
+      </div>
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Submit">
+      </div>
+    </form>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#entityForm').on('submit', function(e) {
+        e.preventDefault();
+        let name = $('#name').val();
+        let type = $('#type').val();
+        let minPrice = $('#minPrice').val();
+        let maxPrice = $('#maxPrice').val();
+        $.ajax({
+          url: '/api/entity',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ name: name, type: type, minPrice: minPrice, maxPrice: maxPrice }),
+          dataType: 'json',
+          success: function(response) {
+            alert("entity created successfully");
+          },
+          error: function(error) {
+            console.error(error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Source Info</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center pt-5">Submit Source Info</h1>
+    <form id="sourceForm" class="pt-5">
+      <div class="form-group">
+        <label for="name">Name:</label><br>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Submit">
+      </div>
+    </form>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#sourceForm').on('submit', function(e) {
+        e.preventDefault();
+        let name = $('#name').val();
+        $.ajax({
+          url: '/api/source',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ name: name }),
+          dataType: 'json',
+          success: function(response) {
+           alert("source created successfully");
+          },
+          error: function(error) {
+            console.error(error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

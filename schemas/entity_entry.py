@@ -7,4 +7,5 @@ class CreateEntityEntrySchema(Schema):
   description = fields.Str(optional=True)
   address = fields.Str(optional=True)
   typeOfFood = fields.Str(optional=True)
+  typeOfPlace = fields.Str(optional=True)
   rating = fields.Number(optional=True)
