@@ -30,6 +30,7 @@ def create_entity_entry_resource(entity_id):
   entry_data["sourceName"] = source["_source"]["name"]
   entry_data["minPrice"] = entity["_source"]["minPrice"]
   entry_data["maxPrice"] = entity["_source"]["maxPrice"]
+  entry_data["entityType"] = entity["_source"]["type"]
   es_response = EntityEntryModel.create(entry_data)
   return jsonify(es_response)
 

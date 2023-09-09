@@ -14,29 +14,38 @@ class EntityEntryModel(ESIndexModel):
       deployment_url=cls.es_deployment_url,
       index=cls.ES_INDEX,
     )
+
+    semantic_search_prompt = """
+Select the documents that include restaurants of the following type {type_of_restaurant} and the following considerations: {user_suggestion}.
+""".format(
+      type_of_restaurant=type_restaurant,
+      user_suggestion=suggestion,
+    )
+
     query = {
       "query": {
-        "text_expansion": {
-          "ml.inference.summary_expanded": {
-            "model_id": ".elser_model_1",
-            "model_text": "How is the cooking styles?"
-          }
-        },
-        #"bool": {
-        #  "must": [{
-        #    "range": {
-        #      "maxPrice": {
-        #        "gte": int(price),
-        #      },
-        #    }
-        #  }, {
-        #    "range": {
-        #      "minPrice": {
-        #        "lte": int(price)
-        #      }
-        #    }
-        #  }]
-        # }
+        "bool": {
+          "must": [{
+            "range": {
+              "maxPrice": {
+                "gte": int(price),
+              },
+            }
+          }, {
+            "range": {
+              "minPrice": {
+                "lte": int(price)
+              }
+            }
+          }, {
+            "text_expansion": {
+              "ml.inference.summary_expanded.predicted_value": {
+                "model_id": ".elser_model_1",
+                "model_text": semantic_search_prompt
+              }
+            },
+          }]
+        }
       }
     }
 
@@ -47,7 +56,5 @@ class EntityEntryModel(ESIndexModel):
       raise Exception("Entry was not created with status code {}\n{}".format(
         response.status_code, response.text))
     responseJson = response.json()
-    print(responseJson)
-    print(responseJson['hits']['hits'])
 
     return responseJson['hits']['hits']
