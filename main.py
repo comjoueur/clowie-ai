@@ -6,11 +6,13 @@ from resources.api.source import create_source_resource, get_all_sources_resourc
 from resources.api.mixed import delete_all_indices_docs
 
 from resources.api.app.restaurant_filtering import restaurant_filtering
+from resources.api.app.playground import playground_resource
 
 from resources.pages.source import create_source_page, delete_source_page
 from resources.pages.entity import create_entity_page, delete_entity_page
 from resources.pages.entity_entry import create_entity_entry_page, delete_entry_page
 from resources.pages.mixed import list_resources_page, delete_all_indices_docs_page
+from resources.pages.app.playground import playground_page
 
 app = Flask(__name__)
 
@@ -46,15 +48,18 @@ app.add_url_rule('/api/entity/entry/<entry_id>',
                  methods=['DELETE'])
 """
 
-App Resource
+App Resources
 
 """
 app.add_url_rule('/api/app/restaurant_filtering',
                  view_func=restaurant_filtering,
                  methods=['GET'])
+app.add_url_rule('/api/app/playground',
+                 view_func=playground_resource,
+                 methods=['POST'])
 """
 
-Pages resources
+Pages Resources
 
 """
 
@@ -79,6 +84,9 @@ app.add_url_rule('/pages/delete-entity',
                  methods=['GET'])
 app.add_url_rule('/pages/delete-entity-entry',
                  view_func=delete_entry_page,
+                 methods=['GET'])
+app.add_url_rule('/pages/playground',
+                 view_func=playground_page,
                  methods=['GET'])
 
 app.add_url_rule('/', view_func=lambda: redirect('/pages'), methods=['GET'])

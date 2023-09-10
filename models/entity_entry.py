@@ -9,29 +9,28 @@ class EntityEntryModel(ESIndexModel):
 
   @classmethod
   def search_by_type_id_and_suggestion(cls, price, type_restaurant,
-                                       preferred_cuisine, suggestion):
+                                       suggestion, prompt=None):
     url = "{deployment_url}/{index}/_search".format(
       deployment_url=cls.es_deployment_url,
       index=cls.ES_INDEX,
     )
 
-    semantic_search_prompt = """
+    if (prompt):
+      semantic_search_prompt = prompt
+    else:
+      semantic_search_prompt = """
 Select the documents that include restaurants of the following type {type_of_restaurant} and the following considerations: {user_suggestion}.
-""".format(
+"""
+    semantic_search_prompt = semantic_search_prompt.format(
       type_of_restaurant=type_restaurant,
       user_suggestion=suggestion,
     )
 
     query = {
+      "size": 50,
       "query": {
         "bool": {
           "must": [{
-            "range": {
-              "maxPrice": {
-                "gte": int(price),
-              },
-            }
-          }, {
             "range": {
               "minPrice": {
                 "lte": int(price)
@@ -56,5 +55,10 @@ Select the documents that include restaurants of the following type {type_of_res
       raise Exception("Entry was not created with status code {}\n{}".format(
         response.status_code, response.text))
     responseJson = response.json()
+    print("len", len(responseJson['hits']['hits']))
+    entities_ids = [entry['_source']['entity_id'] for entry in responseJson['hits']['hits']]
+    # filter unique entity_id
+    entities_ids = list(set(entities_ids))
+    print("len unique " + str(len(entities_ids)))
 
     return responseJson['hits']['hits']

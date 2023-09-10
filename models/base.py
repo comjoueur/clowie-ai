@@ -48,7 +48,7 @@ class ESIndexModel:
 
   @classmethod
   def get_all(cls):
-    url = "{deployment_url}/{index}/_search".format(
+    url = "{deployment_url}/{index}/_search?size=1000".format(
       deployment_url=ES_DEPLOYMENT_URL,
       index=cls.ES_INDEX,
     )
