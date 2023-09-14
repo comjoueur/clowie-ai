@@ -50,14 +50,6 @@
       </select>
       </div>
       <div class="form-group">
-        <select id="preferredType" title="Preferred Type" class="form-control selectpicker" multiple>
-            <option>Fine dining</option>
-            <option>Street food</option>
-            <option>Traditional cuisine</option>
-            <option>Casual Contemporary</option>
-        </select>
-      </div>
-      <div class="form-group">
         <textarea id="userSuggestion" class="form-control" placeholder="Add any details you want us to consider? (e.g. Please include ‘Pujol’ and some asian food for a dinner. Would also like to have lunch one day in Coyoacán.)" rows="4" required></textarea>
       </div>
       <div class="form-group">
@@ -67,37 +59,33 @@
         <input type="number" placeholder="# How many days do you want to go? " id="numberOfDays" class="form-control" required>
       </div>
       <div class="form-group">
-        <label for="esPrompt">ES Prompt</label>
-        <textarea id="esPrompt" class="form-control" rows="4">Select the documents that include restaurants of the following type {type_of_restaurant} and the following considerations: {user_suggestion}.</textarea>
-      </div>
-      <div class="form-group">
         <label for="systemMessage">OpenAI System</label>
-        <textarea id="systemMessage" class="form-control" rows="4" required>System Message</textarea>
+        <textarea id="systemMessage" class="form-control" rows="4" required>You are a helpful travel agent who recommends restaurants. Your responses must always be in JSON (an array of objects, one per restaurant you provide).
+
+Please assist the user using the information  on the following list of restaurants:
+[start of restaurant information]
+{list_of_entries}
+[end of restaurant information]</textarea>
       </div>
       <div class="form-group">
         <label for="openaiPrompt">OpenAI Prompt</label>
-        <textarea id="openaiPrompt" class="form-control" rows="4" required>Recommend one place to dine in Mexico City for each of the following meals:
-{user_selected_days}
-
-Given the next list of restaurant information:
-[start of restaurant information]
-{list_of_entries}
-[end of restaurant information]
-
-Consider the following preferences:
-- {preferred_type}
-- {user_suggestion}
-
-Your response must be a json (an array of objects, each per one restaurant you provide) with the next fields:
+        <textarea id="openaiPrompt" class="form-control" rows="4" required>Recommend one place to dine in Mexico City for each of the following meals
+{user_selected_days} with the following fields:
 
 - "name": string // restaurant name
 - "minPrice": number // approx min price
 - "maxPrice": number // approx max price
-- "description": string // a description in 100 words
+- "description": string // a description of the restaurant in 100 words. with two sentences. 
 - "location": string // it's location (neighborhood)
-- "type": string // type of restaurant (e.g. traditional cuisine, top in rankings, fine dining, local classics, street food)
+- "type”: string // Explanation on why you selected this restaurant based on {user_suggestion}. Start your answer with something like “You will love this restaurant because…”
 - "cuisine": string // Cuisine (e.g. sushi, Italian, Mexican)
-- "meal": string // weekday meal (e.g. wednesday breakfast, wednesday lunch, thursday dinner)</textarea>
+- "meal": string // weekday meal (e.g. wednesday breakfast, wednesday lunch, thursday dinner)
+
+Consider the following preferences:
+- {user_suggestion}
+
+Please don’t repeat restaurants in any meal.
+</textarea>
       </div>
       <button type="submit" id="submitButton" class="btn submit-button">Generate plan</button>
     </form>
@@ -131,12 +119,10 @@ Your response must be a json (an array of objects, each per one restaurant you p
       // Form data
       var formData = {
         budgetPerDinner: $('#budgetPerDinner').val(),
-        preferredType: $('#preferredType').val(),
         userSuggestion: $('#userSuggestion').val(),
         startTime: $('#startTime').val(),
         numberOfDays: $('#numberOfDays').val(),
         meals: $('#meals').val(),
-        esPrompt: $('#esPrompt').val(),
         openaiPrompt: $('#openaiPrompt').val(),
         openaiSystemMessage: $('#systemMessage').val(),
       };
@@ -146,7 +132,7 @@ Your response must be a json (an array of objects, each per one restaurant you p
 
       // Submit form via AJAX
       $.ajax({
-        url: '/api/app/playground',
+        url: '/api/app/playground_v2',
         type: 'POST',
         data: JSON.stringify(formData),
         contentType: 'application/json',
@@ -170,12 +156,13 @@ Your response must be a json (an array of objects, each per one restaurant you p
           for (var restaurant of res) {
             html += "<div>"
             html += "<h4>" + restaurant.name + "</h4>"
-            html += '<img style="width: 100%; height: 150px; margin-bottom: 20px; margin-top: 15px" src="https://t3.ftcdn.net/jpg/03/24/73/92/360_F_324739203_keeq8udvv0P2h1MLYJ0GLSlTBagoXS48.jpg"></img>'
-            html += "<p>" + restaurant.description + "</p>"
-            html += "<p><b>Location:</b> " + restaurant.location + "</p>"
-            html += "<p><b>Type:</b> " + restaurant.type + "</p>"
-            html += "<p><b>Cuisine:</b> " + restaurant.cuisine + "</p>"
-            html += "<p><b>Meal:</b> " + restaurant.meal + "</p>"
+            for (var key in restaurant) {
+              if (key != "name") {
+                html += "<p>" + key + ": " + restaurant[key] + "</p>"
+                console.log(key + ": " + restaurant[key]);
+                console.log(restaurant);
+              }
+            }
             html += "</div>"
           }
           html += "<br><br><br>" + response["entries"]

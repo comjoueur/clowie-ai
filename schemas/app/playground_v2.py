@@ -1,13 +1,11 @@
 from marshmallow import Schema, fields
 
 
-class PlaygroundSchema(Schema):
+class PlaygroundSchemaV2(Schema):
   budgetPerDinner = fields.Number()
-  preferredType = fields.List(fields.Str())
   userSuggestion = fields.Str()
   startTime = fields.Date()
   numberOfDays = fields.Number()
   meals = fields.List(fields.Str())
-  esPrompt = fields.Str()
   openaiPrompt = fields.Str()
   openaiSystemMessage = fields.Str()

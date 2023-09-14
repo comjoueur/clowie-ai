@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Restaurant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+</head>
+<body>
+    <div class="container">
+      <form>
+        <div class="form-group">
+          <label for="name">Restaurant Name</label>
+          <input type="text" class="form-control" id="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="minPrice">Minimum Price</label>
+          <input type="number" class="form-control" id="minPrice" required>
+        </div>
+
+        <div class="form-group">
+          <label for="maxPrice">Maximum Price</label>
+          <input type="number" class="form-control" id="maxPrice" required>
+        </div>
+
+        <div class="form-group">
+          <label for="meals">Meals</label>
+          <select id="meals" class="selectpicker form-control"  multiple="multiple" required>
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="weekdays">Weekdays</label>
+          <select id="weekdays" class="selectpicker form-control"  multiple="multiple" required>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea type="text" class="form-control" id="description" optional></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" class="form-control" id="address" optional>
+        </div>
+
+        <div class="form-group">
+          <label for="typeOfFood">Type Of Food</label>
+          <input type="text" class="form-control" id="typeOfFood" optional>
+        </div>
+
+        <div class="form-group">
+          <label for="typeOfPlace">Type Of Place</label>
+          <input type="text" class="form-control" id="typeOfPlace" optional>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('form').on('submit', function(e) {
+        e.preventDefault(); // stop form from submitting regularly
+
+        // get form data
+        var formData = {
+          'name': $('#name').val(),
+          'minPrice': $('#minPrice').val(),
+          'maxPrice': $('#maxPrice').val(),
+          'meals': $('#meals').val(),
+          'weekdays': $('#weekdays').val(),
+          'description': $('#description').val(),
+          'address': $('#address').val(),
+          'typeOfFood': $('#typeOfFood').val(),
+          'typeOfPlace': $('#typeOfPlace').val()
+        };
+
+        // make ajax request
+        $.ajax({
+          type: 'POST',
+          url: '/api/restaurant',
+          data: JSON.stringify(formData),
+          contentType: 'application/json',
+          success: function(data) {
+            // handle success (redirect, alert message, etc.)
+            alert('Success: ' + JSON.stringify(data));
+          },
+          error: function(error) {
+            // handle error
+            console.error('Error:', error);
+          }
+        });
+      });
+    });
+</script>
+</body>
+</html>

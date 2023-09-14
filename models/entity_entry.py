@@ -15,13 +15,7 @@ class EntityEntryModel(ESIndexModel):
       index=cls.ES_INDEX,
     )
 
-    if (prompt):
-      semantic_search_prompt = prompt
-    else:
-      semantic_search_prompt = """
-Select the documents that include restaurants of the following type {type_of_restaurant} and the following considerations: {user_suggestion}.
-"""
-    semantic_search_prompt = semantic_search_prompt.format(
+    semantic_search_prompt = prompt.format(
       type_of_restaurant=type_restaurant,
       user_suggestion=suggestion,
     )

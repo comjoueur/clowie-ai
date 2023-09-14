@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Restaurant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <form id="delete-restaurant-form">
+            <div class="form-group">
+                <label for="restaurant">Select a restaurant to delete</label>
+                <select id="restaurant" class="form-control selectpicker" data-live-search="true">
+                    <!-- Options are populated by the script below -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-danger">Delete Restaurant</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/api/restaurant/list',
+                method: 'GET',
+                success: function(restaurants) {
+                    $.each(restaurants, function(idx, restaurant) {
+                        console.log(restaurant);
+                        $('#restaurant').append('<option value="'+ restaurant._id +'">'+ restaurant['_source'].name +'</option>');
+                    });
+                    $('.selectpicker').selectpicker('refresh');
+                }
+            });
+            $('#delete-restaurant-form').on('submit', function(e) {
+                e.preventDefault();
+                var selectedRestaurant = $('#restaurant').val();
+                $.ajax({
+                    url: '/api/restaurant/' + selectedRestaurant,
+                    method: 'DELETE',
+                    success: function() {
+                        alert('Restaurant deleted');
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

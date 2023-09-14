@@ -37,23 +37,49 @@ def playground_resource():
     input_data["esPrompt"],
   )
 
-  openai_prompt = input_data["openaiPrompt"].format(
-    user_selected_days=meals_schedule,
-    preferred_type=preferred_type,
-    user_suggestion=input_data["userSuggestion"],
-    list_of_entries="\n".join(
-      [entry["_source"]["summary"] for entry in entries]),
-  )
+  list_of_entries = "\n".join(
+    [entry["_source"]["summary"] for entry in entries])
 
-  print("openaiinput",
-        num_tokens_from_string(openai_prompt, "gpt-3.5-turbo-16k"))
+  system_message = input_data["openaiSystemMessage"]
+  system_message = system_message.replace("{user_selected_days}",
+                                          meals_schedule)
+  system_message = system_message.replace("{preferred_type}", preferred_type)
+  system_message = system_message.replace("{user_suggestion}",
+                                          input_data["userSuggestion"])
+  system_message = system_message.replace("{list_of_entries}", list_of_entries)
+
+  user_prompt = input_data["openaiPrompt"]
+  user_prompt = user_prompt.replace("{user_selected_days}", meals_schedule)
+  user_prompt = user_prompt.replace("{preferred_type}", preferred_type)
+  user_prompt = user_prompt.replace("{user_suggestion}",
+                                    input_data["userSuggestion"])
+  user_prompt = user_prompt.replace("{list_of_entries}", list_of_entries)
+
+  print(
+    "openaiinput",
+    num_tokens_from_string(system_message + user_prompt, "gpt-3.5-turbo-16k"))
+
+  print([
+    {
+      "role": "system",
+      "content": system_message,
+    },
+    {
+      "role": "user",
+      "content": user_prompt,
+    },
+  ])
 
   openAIresponse = openai.ChatCompletion.create(
     model="gpt-3.5-turbo-16k",
     messages=[
       {
+        "role": "system",
+        "content": system_message,
+      },
+      {
         "role": "user",
-        "content": openai_prompt,
+        "content": user_prompt,
       },
     ],
     temperature=1,
@@ -64,6 +90,7 @@ def playground_resource():
   )
   response = openAIresponse['choices'][0]['message']['content']
   print("openaioutput", num_tokens_from_string(response, "gpt-3.5-turbo-16k"))
+
   return jsonify({
     "response":
     response,
